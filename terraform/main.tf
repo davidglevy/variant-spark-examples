@@ -166,3 +166,9 @@ resource "databricks_job" "this" {
 resource "databricks_repo" "examples" {
   url = "https://github.com/davidglevy/variant-spark-examples"
 }
+
+resource "databricks_repo" "genomics_notebook" {
+  url = "https://github.com/microsoft/genomicsnotebook"
+}
+
+
