@@ -7,6 +7,7 @@ terraform {
 
     databricks = {
       source = "databricks/databricks"
+      version = ">= 1.0.1"
     }
   }
 }
@@ -60,18 +61,86 @@ resource "databricks_notebook" "this" {
 
 // Get the smallest available node type to use for the cluster. Choose
 // only from among available node types with local storage.
-//data "databricks_node_type" "smallest" {
-//  local_disk = true
-//}
+data "databricks_node_type" "smallest" {
+  local_disk = true
+}
 
 // Get the latest Spark version to use for the cluster.
 data "databricks_spark_version" "latest" {}
 
 // Create the job, emailing notifiers about job success or failure.
-//resource "databricks_job" "this" {
-//  name = "${var.resource_prefix}-job-${data.databricks_current_user.me.alphanumeric}"
+resource "databricks_job" "this" {
+  name = "${var.resource_prefix}-job-${data.databricks_current_user.me.alphanumeric}"
+  
+  // Example of a git sourced job
+  git_source {
+    url = "https://github.com/davidglevy/variant-spark-examples"
+    branch = "main"
+    provider = "github"
+  }
+
+
+
+  job_cluster {
+    job_cluster_key = "genomics_job_cluster"
+    new_cluster {
+      num_workers   = 3
+      spark_version = data.databricks_spark_version.latest.id
+      node_type_id  = data.databricks_node_type.smallest.id
+
+    }
+  }
+
+  task {
+    task_key = "Ingest"
+    job_cluster_key = "genomics_job_cluster"
+    notebook_task {
+      notebook_path = "jobs/01 Jobs Example - Ingest"
+    }
+    library {
+      maven {
+        coordinates = "au.csiro.aehrc.variant-spark:variant-spark_2.12:0.5.0"
+      }
+    }
+  }
+  
+  task {
+    task_key = "Process"
+    job_cluster_key = "genomics_job_cluster"
+    notebook_task {
+      notebook_path = "jobs/02 Jobs Example - Process"
+    }
+    depends_on {
+      task_key = "Ingest"
+    }
+    library {
+      maven {
+        coordinates = "au.csiro.aehrc.variant-spark:variant-spark_2.12:0.5.0"
+      }
+    }
+  }
+
+  task {
+    task_key = "Visualise"
+    job_cluster_key = "genomics_job_cluster"
+    notebook_task {
+      notebook_path = "jobs/03 Jobs Example - Visualise"
+    }
+    depends_on {
+      task_key = "Process"
+    }
+    library {
+      maven {
+        coordinates = "au.csiro.aehrc.variant-spark:variant-spark_2.12:0.5.0"
+      }
+    }
+  }
+
+}
+
+
 //  new_cluster {
-//    num_workers   = 1
+//    num_workers   = 3
 //    spark_version = data.databricks_spark_version.latest.id
 //    node_type_id  = data.databricks_node_type.smallest.id
 //  }
