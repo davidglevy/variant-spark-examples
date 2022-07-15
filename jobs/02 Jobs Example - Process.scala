@@ -10,6 +10,10 @@
 
 // COMMAND ----------
 
+dbutils.widgets.text("database_name", "variant_spark", "Database Name")
+
+// COMMAND ----------
+
 import au.csiro.variantspark.api.VSContext
 import au.csiro.variantspark.api.ImportanceAnalysis
 implicit val vsContext = VSContext(spark)
@@ -60,3 +64,17 @@ val importanceAnalysis = ImportanceAnalysis(featureSource, labelSource, nTrees =
 val variableImportance = importanceAnalysis.variableImportance
 variableImportance.cache().registerTempTable("importance")
 display(variableImportance)
+
+// COMMAND ----------
+
+val database_name = dbutils.widgets.get("database_name")
+
+// COMMAND ----------
+
+
+variableImportance.write.format("delta").mode("overwrite").saveAsTable(s"$database_name.variable_importance")
+
+// COMMAND ----------
+
+val df = spark.sql(s"SELECT * FROM $database_name.variable_importance")
+display(df)
