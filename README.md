@@ -9,7 +9,7 @@ following artifacts:
 3. A cluster with library configuration to run VariantSpark
 4. An example data pipeline to run variant spark
 
-![Variant Spark running in a multi task job](jobs_running.png "Multi-Task Job Pipeline"
+![Variant Spark running in a multi task job](jobs_running.png "Multi-Task Job Pipeline")
 
 If all goes well, you will create the multi-task job pipeline above.
 
