@@ -105,6 +105,19 @@ resource "databricks_job" "this" {
   }
   
   task {
+    task_key = "Setup_Database"
+    job_cluster_key = "genomics_job_cluster"
+    notebook_task {
+      notebook_path = "jobs/01 Jobs Example - Setup Databases"
+    }
+    library {
+      maven {
+        coordinates = "au.csiro.aehrc.variant-spark:variant-spark_2.12:0.5.0"
+      }
+    }
+  }
+ 
+ task {
     task_key = "Process"
     job_cluster_key = "genomics_job_cluster"
     notebook_task {
@@ -112,6 +125,9 @@ resource "databricks_job" "this" {
     }
     depends_on {
       task_key = "Ingest"
+    }
+    depends_on {
+      task_key = "Setup_Database"
     }
     library {
       maven {
