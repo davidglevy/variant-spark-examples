@@ -11,7 +11,7 @@ from pyspark.sql.functions import col, lit
 
 db_exists = spark.sql("""
   SHOW DATABASES
-""").filter(col("databaseName") == lit("variant_spark")).count() == 1
+""").filter(col("databaseName") == lit(database_name)).count() == 1
 display(db_exists)
 
 # COMMAND ----------
