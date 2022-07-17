@@ -1,9 +1,9 @@
 # Databricks notebook source
-dbutils.widgets.text("database_prefix", "variant_spark", "Database Name")
+dbutils.widgets.text("database_name", "variant_spark", "Database Name")
 
 # COMMAND ----------
 
-database_name = dbutils.widgets.get("database_prefix")
+database_name = dbutils.widgets.get("database_name")
 
 # COMMAND ----------
 

@@ -96,6 +96,11 @@ resource "databricks_job" "this" {
     job_cluster_key = "genomics_job_cluster"
     notebook_task {
       notebook_path = "jobs/01 Jobs Example - Ingest"
+
+      base_parameters = {
+        database_name = "variant_spark_${data.databricks_current_user.me.alphanumeric}"
+      }
+
     }
     library {
       maven {
@@ -109,6 +114,9 @@ resource "databricks_job" "this" {
     job_cluster_key = "genomics_job_cluster"
     notebook_task {
       notebook_path = "jobs/01 Jobs Example - Setup Databases"
+      base_parameters = {
+        database_name = "variant_spark_${data.databricks_current_user.me.alphanumeric}"
+      }
     }
     library {
       maven {
@@ -122,6 +130,9 @@ resource "databricks_job" "this" {
     job_cluster_key = "genomics_job_cluster"
     notebook_task {
       notebook_path = "jobs/02 Jobs Example - Process"
+      base_parameters = {
+        database_name = "variant_spark_${data.databricks_current_user.me.alphanumeric}"
+      }
     }
     depends_on {
       task_key = "Ingest"
@@ -141,6 +152,9 @@ resource "databricks_job" "this" {
     job_cluster_key = "genomics_job_cluster"
     notebook_task {
       notebook_path = "jobs/03 Jobs Example - Visualise"
+      base_parameters = {
+        database_name = "variant_spark_${data.databricks_current_user.me.alphanumeric}"
+      }
     }
     depends_on {
       task_key = "Process"
