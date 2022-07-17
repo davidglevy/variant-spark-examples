@@ -63,6 +63,8 @@ resource "databricks_notebook" "this" {
 // only from among available node types with local storage.
 data "databricks_node_type" "smallest" {
   local_disk = true
+  min_cores   = 16
+  gb_per_core = 2
 }
 
 // Get the latest Spark version to use for the cluster.
